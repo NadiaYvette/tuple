@@ -4,7 +4,8 @@
 module Data.Tuple.Select where
 import Data.Tuple.OneTuple
 
-instance Sel1 (OneTuple a) a where sel1 (OneTuple x) = x
+instance Sel1 (OneTuple a) a where
+    sel1 (OneTuple x) = x
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

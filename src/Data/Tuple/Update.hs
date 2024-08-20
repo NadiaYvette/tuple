@@ -4,7 +4,8 @@
 module Data.Tuple.Update where
 import Data.Tuple.OneTuple
 
-instance Upd1 b (OneTuple a) (OneTuple b) where upd1 x (OneTuple _) = OneTuple x
+instance Upd1 b (OneTuple a) (OneTuple b) where
+    upd1 x (OneTuple _) = OneTuple x
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs
