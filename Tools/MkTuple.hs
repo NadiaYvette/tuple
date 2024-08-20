@@ -1,3 +1,4 @@
+#!/usr/bin/env runghc
 {-# LANGUAGE PatternGuards #-}
 module Main where
 import Data.List
