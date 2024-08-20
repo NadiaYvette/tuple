@@ -22,8 +22,7 @@ source-repository head
 
 library
   Build-Depends:
-    base < 10,
-    OneTuple < 10
+    base < 10
 
   Exposed-modules:
     Data.Tuple.All

@@ -2,10 +2,10 @@
 -- This module contains overloaded functions for selecting an element from a tuple.
 -- The /selN/ function selects element /N/ from any supported tuple size.
 module Data.Tuple.Select where
-import Data.Tuple.OneTuple
+import Data.Tuple
 
-instance Sel1 (OneTuple a) a where
-    sel1 (OneTuple x) = x
+instance Sel1 (Solo a) a where
+    sel1 (MkSolo x) = x
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

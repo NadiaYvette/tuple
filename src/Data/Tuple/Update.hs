@@ -2,10 +2,10 @@
 -- This module contains overloaded functions for updating an element from a tuple.
 -- The /updN/ function updates element /N/ from any supported tuple size.
 module Data.Tuple.Update where
-import Data.Tuple.OneTuple
+import Data.Tuple
 
-instance Upd1 b (OneTuple a) (OneTuple b) where
-    upd1 x (OneTuple _) = OneTuple x
+instance Upd1 b (Solo a) (Solo b) where
+    upd1 x (MkSolo _) = MkSolo x
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

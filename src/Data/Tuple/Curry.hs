@@ -1,15 +1,15 @@
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 module Data.Tuple.Curry where
-import Data.Tuple.OneTuple
+import Data.Tuple
 
 -- | Tuple curry/uncurry.
 class Curry a b | a -> b where
     curryN   :: a -> b
     uncurryN :: b -> a
 
-instance Curry (OneTuple a -> b) (a -> b) where
-    curryN f a = f (OneTuple a)
-    uncurryN f ~(OneTuple a) = f a
+instance Curry (Solo a -> b) (a -> b) where
+    curryN f a = f (MkSolo a)
+    uncurryN f ~(MkSolo a) = f a
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

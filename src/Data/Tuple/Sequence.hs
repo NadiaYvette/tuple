@@ -1,6 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 module Data.Tuple.Sequence where
-import Data.Tuple.OneTuple
+import Data.Tuple
 import Control.Monad
 
 -- | Tuple sequencing, i.e., take a tuple of of monadic actions and do them from left-to-right,
@@ -8,8 +8,8 @@ import Control.Monad
 class SequenceT a b | a -> b where
     sequenceT :: a -> b
 
-instance (Monad m) => SequenceT (OneTuple (m a)) (m (OneTuple a)) where
-    sequenceT (OneTuple a) = return OneTuple `ap` a
+instance (Monad m) => SequenceT (Solo (m a)) (m (Solo a)) where
+    sequenceT (MkSolo a) = return MkSolo `ap` a
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs
