@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
+{-# LANGUAGE CPP, MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 module Data.Tuple.Sequence where
 import Data.Tuple
 import Control.Monad
@@ -8,8 +8,13 @@ import Control.Monad
 class SequenceT a b | a -> b where
     sequenceT :: a -> b
 
-instance (Monad m) => SequenceT (Solo (m a)) (m (Solo a)) where
+#if MIN_VERSION_base(4,18,0)
+instance Monad m => SequenceT (Solo (m a)) (m (Solo a)) where
     sequenceT (MkSolo a) = return MkSolo `ap` a
+#else
+instance Monad m => SequenceT (Solo (m a)) (m (Solo a)) where
+    sequenceT (Solo a) = return Solo `ap` a
+#endif
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

@@ -1,11 +1,16 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
+{-# LANGUAGE CPP, MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 -- This module contains overloaded functions for updating an element from a tuple.
 -- The /updN/ function updates element /N/ from any supported tuple size.
 module Data.Tuple.Update where
 import Data.Tuple
 
+#if MIN_VERSION_base(4,18,0)
 instance Upd1 b (Solo a) (Solo b) where
     upd1 x (MkSolo _) = MkSolo x
+#else
+instance Upd1 b (Solo a) (Solo b) where
+    upd1 x (Solo _) = Solo x
+#endif
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

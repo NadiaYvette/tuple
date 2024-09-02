@@ -1,11 +1,16 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
+{-# LANGUAGE CPP, MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 -- This module contains overloaded functions for selecting an element from a tuple.
 -- The /selN/ function selects element /N/ from any supported tuple size.
 module Data.Tuple.Select where
 import Data.Tuple
 
+#if MIN_VERSION_base(4,18,0)
 instance Sel1 (Solo a) a where
     sel1 (MkSolo x) = x
+#else
+instance Sel1 (Solo a) a where
+    sel1 (Solo x) = x
+#endif
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs

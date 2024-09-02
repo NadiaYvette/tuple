@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
+{-# LANGUAGE CPP, MultiParamTypeClasses, FunctionalDependencies, FlexibleInstances #-}
 module Data.Tuple.Curry where
 import Data.Tuple
 
@@ -7,9 +7,15 @@ class Curry a b | a -> b where
     curryN   :: a -> b
     uncurryN :: b -> a
 
+#if MIN_VERSION_base(4,18,0)
 instance Curry (Solo a -> b) (a -> b) where
     curryN f a = f (MkSolo a)
     uncurryN f ~(MkSolo a) = f a
+#else
+instance Curry (Solo a -> b) (a -> b) where
+    curryN f a = f (Solo a)
+    uncurryN f ~(Solo a) = f a
+#endif
 
 --snip-----------------
 ---- Machine generated code below, see Tools/MkTuple.hs
