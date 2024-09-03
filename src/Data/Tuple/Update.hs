@@ -4,12 +4,19 @@
 module Data.Tuple.Update where
 import Data.Tuple
 
+#if !MIN_VERSION_base(4,16,0)
+import Data.Tuple.OneTuple
+#endif
+
 #if MIN_VERSION_base(4,18,0)
 instance Upd1 b (Solo a) (Solo b) where
     upd1 x (MkSolo _) = MkSolo x
-#else
+#elif MIN_VERSION_base(4,16,0)
 instance Upd1 b (Solo a) (Solo b) where
     upd1 x (Solo _) = Solo x
+#else
+instance Upd1 b (OneTuple a) (OneTuple b) where
+    upd1 x (OneTuple _) = OneTuple x
 #endif
 
 --snip-----------------

@@ -3,6 +3,10 @@ module Data.Tuple.Sequence where
 import Data.Tuple
 import Control.Monad
 
+#if !MIN_VERSION_base(4,16,0)
+import Data.Tuple.OneTuple
+#endif
+
 -- | Tuple sequencing, i.e., take a tuple of of monadic actions and do them from left-to-right,
 -- returning the resulting tuple.
 class SequenceT a b | a -> b where
@@ -11,9 +15,12 @@ class SequenceT a b | a -> b where
 #if MIN_VERSION_base(4,18,0)
 instance Monad m => SequenceT (Solo (m a)) (m (Solo a)) where
     sequenceT (MkSolo a) = return MkSolo `ap` a
-#else
+#elif MIN_VERSION_base(4,16,0)
 instance Monad m => SequenceT (Solo (m a)) (m (Solo a)) where
     sequenceT (Solo a) = return Solo `ap` a
+#else
+instance Monad m => SequenceT (OneTuple (m a)) (m (OneTuple a)) where
+    sequenceT (OneTuple a) = return OneTuple `ap` a
 #endif
 
 --snip-----------------

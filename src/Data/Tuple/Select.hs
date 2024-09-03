@@ -4,12 +4,19 @@
 module Data.Tuple.Select where
 import Data.Tuple
 
+#if !MIN_VERSION_base(4,16,0)
+import Data.Tuple.OneTuple
+#endif
+
 #if MIN_VERSION_base(4,18,0)
 instance Sel1 (Solo a) a where
     sel1 (MkSolo x) = x
-#else
+#elif MIN_VERSION_base(4,16,0)
 instance Sel1 (Solo a) a where
     sel1 (Solo x) = x
+#else
+instance Sel1 (OneTuple a) a where
+    sel1 (OneTuple x) = x
 #endif
 
 --snip-----------------

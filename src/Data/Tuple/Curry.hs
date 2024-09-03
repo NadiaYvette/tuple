@@ -2,6 +2,10 @@
 module Data.Tuple.Curry where
 import Data.Tuple
 
+#if !MIN_VERSION_base(4,16,0)
+import Data.Tuple.OneTuple
+#endif
+
 -- | Tuple curry/uncurry.
 class Curry a b | a -> b where
     curryN   :: a -> b
@@ -11,10 +15,14 @@ class Curry a b | a -> b where
 instance Curry (Solo a -> b) (a -> b) where
     curryN f a = f (MkSolo a)
     uncurryN f ~(MkSolo a) = f a
-#else
+#elif MIN_VERSION_base(4,16,0)
 instance Curry (Solo a -> b) (a -> b) where
     curryN f a = f (Solo a)
     uncurryN f ~(Solo a) = f a
+#else
+instance Curry (OneTuple a -> b) (a -> b) where
+    curryN f a = f (OneTuple a)
+    uncurryN f ~(OneTuple a) = f a
 #endif
 
 --snip-----------------

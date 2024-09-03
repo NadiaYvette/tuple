@@ -23,6 +23,8 @@ source-repository head
 library
   Build-Depends:
     base < 10
+  if impl(ghc < 9.2)
+    Build-Depends: OneTuple
 
   Exposed-modules:
     Data.Tuple.All
