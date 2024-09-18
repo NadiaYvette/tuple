@@ -3,10 +3,13 @@ all:
 
 N=32
 
-update:	updateCurry updateSelect updateSequence updateUpd
+update:	updateCurry updateLift updateSelect updateSequence updateUpd
 
 updateCurry:
 	make N=$(N) UPDFILE=src/Data/Tuple/Curry.hs UPD=curry updateIt
+
+updateLift:
+	make N=$(N) UPDFILE=src/Data/Tuple/Lift.hs UPD=lift updateIt
 
 updateSelect:
 	make N=$(N) UPDFILE=src/Data/Tuple/Select.hs UPD=select updateIt

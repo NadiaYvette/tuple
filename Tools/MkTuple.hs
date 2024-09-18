@@ -1,5 +1,6 @@
 {-# LANGUAGE PatternGuards #-}
 module Main where
+import Data.Function
 import Data.List
 import System.Environment
 
@@ -8,17 +9,18 @@ main = do
     args <- getArgs
     case args of
         [w, sn] | Just gen <- lookup w gens, [(n,"")] <- reads sn -> do
-	    putStrLn "--snip-----------------"
-	    putStrLn "---- Machine generated code below, see Tools/MkTuple.hs"
-	    putStrLn $ "---- " ++ unwords ("mkTuple" : args)
+            putStrLn "--snip-----------------"
+            putStrLn "---- Machine generated code below, see Tools/MkTuple.hs"
+            putStrLn $ "---- " ++ unwords ("mkTuple" : args)
             gen n
-	_ -> error $ "Usage: MkTuple generator number\n"
+        _ -> error $ "Usage: MkTuple generator number\n"
 
 gens :: [(String, Int -> IO ())]
-gens = [("select", generateSel),
-        ("sequence", generateSeq),
-        ("curry", generateCurry),
-        ("update", generateUpd)
+gens = [ ("select",   generateSel)
+       , ("sequence", generateSeq)
+       , ("curry",    generateCurry)
+       , ("update",   generateUpd)
+       , ("lift",     generateLift)
        ]
 
 ---------
@@ -62,7 +64,7 @@ generateCurryN i =
     putStrLn $ "instance Curry (" ++ tup ++ " -> r) (" ++
                intercalate "->" vars ++ " -> r) where\n" ++
                "    curryN f " ++ varsp ++ " = f " ++ tup ++ "\n" ++
-	       "    uncurryN f ~" ++ tup ++ " = f " ++ varsp
+               "    uncurryN f ~" ++ tup ++ " = f " ++ varsp
   where vars = ["a" ++ show j | j <- [1..i]]
         tup = "(" ++ intercalate "," vars ++ ")"
         varsp = unwords vars
@@ -86,3 +88,41 @@ generateUpdNinst j i = do
                intercalate "," [ "a" ++ show l | l <- [1..i]] ++ ") = " ++ res
  where res =
         "(" ++ intercalate "," [ if l == j then "b" else "a" ++ show l | l <- [1..i]] ++ ")"
+
+---------
+
+generateLift :: Int -> IO ()
+generateLift = mapM_ putStrLn . generateLift' where
+  generateLift' :: Int -> [String]
+  generateLift' n
+    = concatMap (unwords <$>)
+    . intersperse [[""]] -- [[[String]]]
+    . fmap buildLift' -- [[[String]]]
+    . drop 1 -- [[Int]]
+    $ inits [1 .. n] -- [[Int]]
+    where
+      -- a list of lines comprised of plain strings
+      buildLift :: [Int] -> [String]
+      buildLift ks = unwords <$> buildLift' ks
+      -- a list of lines comprised of lists of words
+      buildLift' :: [Int] -> [[String]]
+      buildLift' ks =
+          [ ["instance", "Applicative", "f", "=>", "LiftAN", "f"]
+                    <> [funcArgTypeStr'] <> [liftArgTypeStr'] <> ["where"]
+          , [replicate 2 ' ', "liftAN", "f"] <> varStrs <> ["="]
+          , [replicate 4 ' ', "f", "<$>"] <> intersperse "<*>" varStrs ]
+        where
+          numberStrs = show <$> ks
+          typeStrs = ('t' :) <$> numberStrs
+          varStrs = ('x' :) <$> numberStrs
+          funcArgTypeStrs = intersperse "->" $ ('t' :) <$> numberStrs & (<> ["r"])
+          funcArgTypeStr' = parens funcArgTypeStrs
+          liftArgTypeStrs =
+            intersperse "->" [unwords ["f", t] | t <- typeStrs <> ["r"]]
+          liftArgTypeStr' = parens liftArgTypeStrs
+          mainArgContext  = ["Applicative", "f", "=>"]
+          mainArgTypeStrs = intersperse "->" $ funcArgTypeStr' : liftArgTypeStrs
+          putBetween :: String -> String -> [String] -> String
+          putBetween lb rb ss = lb <> unwords ss <> rb
+          parens :: [String] -> String
+          parens = putBetween "(" ")"

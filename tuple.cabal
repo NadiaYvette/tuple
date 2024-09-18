@@ -28,6 +28,7 @@ library
   Exposed-modules:
     Data.Tuple.All
     Data.Tuple.Curry
+    Data.Tuple.Lift
     Data.Tuple.Select
     Data.Tuple.Sequence
     Data.Tuple.Update
