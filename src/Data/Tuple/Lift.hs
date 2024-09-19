@@ -6,7 +6,7 @@ module Data.Tuple.Lift where
 import Data.Tuple.OneTuple
 
 -- | Tuple curry/uncurry.
-class LiftAN f a b | a b -> f where
+class LiftAN f a b | b -> f a where
     liftAN   :: a -> b
 
 --snip-----------------
